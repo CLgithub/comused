@@ -93,7 +93,6 @@ public class SqlComUserd {
             }
             // 获取各行数据
             int batchSize=5000;
-
             int total=baseService.getTotlaBySql(queryRunner,sql);
             for(int i=1;i<=total/batchSize+1;i++){
                 String pageSql = baseService.getPageBeanSqlOracle(sql, i, batchSize);
