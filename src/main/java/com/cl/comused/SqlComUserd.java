@@ -194,14 +194,104 @@ public class SqlComUserd {
         return strT;
     }
 
-    public static void main(String[] args){
-//        String sql="select * from t_icphj_temp";
-        String sql="select * from t_dns_top300_doamin_url";
-        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyyMMddhhmmss");
-//        File file=new File("e:/sqlFile_"+simpleDateFormat.format(new Date())+".csv");
-        File file1=new File("/Users/l/develop/abc.csv");
-//        getFileBysql(sql,file1,"|",true);
-        String headStr = getFileBySql(sql, file1, "|%|", false, 5000);
-        System.out.println(headStr);
+    /**
+     * 根据csv文件，建表，并将文件数据插入表
+     * @param conn 数据库链接
+     * @param csvFile csv文件
+     * @param coding 文件编码
+     * @param separator csv文件分隔符
+     * @param tableName 表名称
+     * @param columns 表字段，默认取csv文件中头信息，若csv文件中头信息包含中文，则必须指定表字段，字段必须与csv文件列对应
+     * @return 建表sql
+     */
+    public static String getTableByCSVFile(Connection conn, File csvFile, String coding, String separator, String tableName, String... columns){
+        if(csvFile.exists()){
+            PreparedStatement ps1=null;
+            PreparedStatement ps2=null;
+            String[] cs=null;
+            BufferedReader bReader = null;
+            String createSql=null;
+            try {
+                bReader = new BufferedReader(new InputStreamReader(new FileInputStream(csvFile), coding));
+                //0 建表
+                String headStr = bReader.readLine();
+                String[] headSplit = headStr.split(separator, -1);
+                String sql1="";
+                if(columns.length!=0){
+                    if(headSplit.length==columns.length){
+                        cs=columns;
+                    } else{
+                    }
+                }else{
+                    cs=headSplit;
+                }
+                for(String column:cs){
+                    sql1+=column+" varchar2(200), ";
+                }
+                sql1=sql1.substring(0,sql1.length()-2);
+                createSql="create table "+tableName+" ( "+sql1+" )";
+                ps1 = conn.prepareStatement(createSql);
+                boolean execute = ps1.execute();
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    //1 插入数据
+                    String sql2 = "";
+                    for (int i = 0; i < cs.length; i++) {
+                        sql2 += "?, ";
+                    }
+                    sql2 = sql2.substring(0, sql2.length() - 2);
+                    String insertSql = "insert into " + tableName + " values(" + sql2 + ")";
+                    ps2 = conn.prepareStatement(insertSql);
+                    int count = 0;
+                    int batchSize = 10000;
+                    for (String strLine = bReader.readLine(); strLine != null; strLine = bReader.readLine()) {
+                        String[] split = strLine.split(separator, -1);
+                        for (int j = 0; j < cs.length; j++) {
+                            System.out.println(split[j]);
+                            ps2.setString(j + 1, split[j]);
+                        }
+                        ps2.addBatch();
+                        if (++count % batchSize == 0) {
+                            ps2.executeBatch();
+                            ps2.clearBatch();
+                        }
+                    }
+                    ps2.executeBatch();
+                    ps2.clearBatch();
+                } catch (Exception e){
+                    e.printStackTrace();
+                } finally {
+                    try {
+                        if(ps1!=null) ps1.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    } finally {
+                        try {
+                            if(ps2!=null) ps2.close();
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        } finally {
+                            try {
+                                if(bReader!=null) bReader.close();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+            }
+            return createSql;
+        }
+        return null;
+    }
+
+    public static void main(String[] args) throws SQLException {
+        Connection connection = JDBCUtilHikariCP.getConnection();
+        File file = new File("/Users/l/develop/ultrapower/ultrapowerBin/30-GzCsvFileToTable/IDC-CDN-Cache--wangye20180713.csv");
+        String[] cloumns={"time", "infoGroupNmae", "name", "indexByteTime", "pageLoadTime", "inout", "hostip", "address"};
+        String str = getTableByCSVFile(connection, file, "gbk",",","t1234" ,cloumns);
+
     }
 }
