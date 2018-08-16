@@ -16,22 +16,13 @@ import java.util.logging.Logger;
  */
 public class FtpComUserd {
 
-    public static void main(String[] args){
-        List<File> files=new ArrayList<File>();
-        files.add(new File("/Users/l/develop/ultrapower/ultrapowerBin/31-/PMS_DATA/"));
-        List<String> fnkeys=new ArrayList<String>();
-        fnkeys.add(".D");
-        fnkeys.add("-all");
-        ftpUpLoadFD(files,fnkeys);
-    }
 
     /**
-     * ftp上传文件夹
-     * @author L
-     * @date 2018-7-27
-     * @param files
+     * 上传文件或文件夹到ftp
+     * @param dirs 要上传的文件夹
+     * @param files 指定要上传的文件，当没有指定时，文件夹下全部上传
      */
-    public static void ftpUpLoadFD(List<File> files,List<String> fnKeys){
+    public static void ftpUpLoadFD(List<File> dirs,List<File> files){
         String ftpUrl = "192.168.3.231"; //ftp服务器地址
         int ftpPort = 21; //ftp服务端口
         String ftpUserName = "ftpuser1"; //ftp登录名
@@ -56,7 +47,7 @@ public class FtpComUserd {
                 if(changeWorkingDirectory){
                     ftpClient.setFileTransferMode(ftpClient.BINARY_FILE_TYPE);
                     ftpClient.enterLocalPassiveMode();  //设置本地为被动模式
-                    upDir(files,ftpClient,ftpPath,fiStream, fnKeys);
+                    upDir(dirs,ftpClient,ftpPath,fiStream, files);
                 }
             }
 
@@ -86,28 +77,32 @@ public class FtpComUserd {
         }
     }
 
-    public static void upDir(List<File> files, FTPClient ftpClient, String ftpPath, FileInputStream fiStream, List<String> fnKeys) throws IOException {
+    /**
+     * 上传文件夹或文件
+     * @param dirs  要上传的文件夹或文件
+     * @param ftpClient ftp客户端
+     * @param ftpPath ftp路径
+     * @param fiStream  文件输入流
+     * @param files 指定要上传的文件，当没有指定时，文件夹下全部上传
+     * @throws IOException
+     */
+    public static void upDir(List<File> dirs, FTPClient ftpClient, String ftpPath, FileInputStream fiStream, List<File> files) throws IOException {
         int reply;
-        for (File file : files) {
+        for (File file : dirs) {
             if(file.isDirectory()){
                 boolean b = ftpClient.makeDirectory(ftpPath+file.getName());
                 reply=ftpClient.getReplyCode();     //得到返回参数
                 System.out.println("创建文件夹："+file.getName()+",是否成功："+b+","+reply);
-                upDir(Arrays.asList(file.listFiles()),ftpClient,ftpPath+file.getName()+"/",fiStream, fnKeys);
+                upDir(Arrays.asList(file.listFiles()),ftpClient,ftpPath+file.getName()+"/",fiStream, files);
             }else {
-                if(fnKeys==null||fnKeys.size()==0){
+                if(files==null||files.size()==0){
+                    System.out.println("指定的上传为空，全部上传");
                     fiStream = new FileInputStream(file);
                     boolean storeFile = ftpClient.storeFile(ftpPath+file.getName(), fiStream);
                     reply=ftpClient.getReplyCode();     //得到返回参数
                     System.out.println("上传"+file.getName()+"是否成功：" + storeFile+","+reply);
                 }else{
-                    boolean b=true;
-                    for(String fnKey:fnKeys){
-                        if(file.getName().contains(fnKey)){
-                            b=false;
-                        }
-                    }
-                    if(b){
+                    if(files.contains(file)){
                         fiStream = new FileInputStream(file);
                         boolean storeFile = ftpClient.storeFile(ftpPath+file.getName(), fiStream);
                         reply=ftpClient.getReplyCode();     //得到返回参数
