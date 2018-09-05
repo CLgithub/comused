@@ -50,6 +50,40 @@ public class HttpComUsed {
      * http请求
      */
     public static void httpRequest() {
+        CloseableHttpClient httpClient=null;
+        CloseableHttpResponse response=null;
+        String paramData="{'a':123,'b':'c'}";
+        String url="http://xxxx.xxx.xxx";
+        String jsession="";
+        try {
+            // 设置请求参数
+            List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+            nvps.add(new BasicNameValuePair("paramData",paramData));
+            HttpEntity reqEntity = new UrlEncodedFormEntity(nvps, Consts.UTF_8);
+            httpClient = HttpClients.createDefault();
+            HttpPost httpPost = new HttpPost(url);
+            httpPost.setEntity(reqEntity);
+            httpPost.setHeader("Cookie", "JSESSIONID=" + jsession);
+
+            // 执行请求
+            response = httpClient.execute(httpPost);
+            String content = EntityUtils.toString(response.getEntity());
+            byte[] bytes = EntityUtils.toByteArray(response.getEntity());
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if(httpClient!=null) httpClient.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if(response!=null)response.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     /**
