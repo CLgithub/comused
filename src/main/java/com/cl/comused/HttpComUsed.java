@@ -93,17 +93,15 @@ public class HttpComUsed {
      * @throws ClientProtocolException
      * @throws IOException
      */
-    public static CloseableHttpResponse exeRequest(CloseableHttpClient cHttpClient, String url, List<Map<String, String>> paramDatas, String jsession) throws ClientProtocolException, IOException{
+    public static CloseableHttpResponse exeRequest(CloseableHttpClient cHttpClient, String url, Map<String, String> paramDatas, String jsession) throws ClientProtocolException, IOException{
         HttpPost httpPost=new HttpPost(url);
         // 设置请求参数
         List<NameValuePair> nvps = new ArrayList<NameValuePair>();
         if(paramDatas!=null){
-            for(Map<String, String> param:paramDatas){
-                Set<Entry<String,String>> entrySet = param.entrySet();
-                for(Iterator<Entry<String, String>> iterator = entrySet.iterator();iterator.hasNext();){
-                    Entry<String, String> entry = iterator.next();
-                    nvps.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
-                }
+            Set<Entry<String,String>> entrySet = paramDatas.entrySet();
+            for(Iterator<Entry<String, String>> iterator = entrySet.iterator();iterator.hasNext();){
+                Entry<String, String> entry = iterator.next();
+                nvps.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
             }
         }
         HttpEntity reqEntity = new UrlEncodedFormEntity(nvps, Consts.UTF_8);
