@@ -23,6 +23,7 @@ public class JsonComUserd {
 
         JSONArray jsonArray = objArrToJsonArr(objArr);
         JSONObject jsonObject = objToJson(new TestA("a", 1, "c"));
+        System.out.println(jsonObject);
         TestA testA = jsonToObj(jsonObject, TestA.class);
 
         TestA[] testAS = jsonArrToObjArr(jsonArray, TestA.class);
