@@ -122,76 +122,94 @@ public class SqlComUserd {
     /**
      * 根据sql将数据封装到csv文件
      * @author chenlei
-     * @date 2018年5月31日
+     * @date 2018年7月25日
      * @param sql sql语句
      * @param csvFile csv文件
      * @param separator 分隔符
      * @param head 是否将头数据封装到文件
      * @param batchSize 每次查询大小
-     * @return
+     * @param coding 编码
+     * @return 头字符串
      */
-    public static String getFileBySql(String sql, File csvFile, String separator, boolean head, int batchSize) {
+    public static String getFileBySql(QueryRunner queryRunner, String sql, File csvFile, String separator, boolean head, int batchSize, String coding) {
+        sql="select * from ("+sql+") tab0";
+//        logger.info("开始根据sql封装文件"+csvFile);
+        if(!csvFile.exists()){
+            boolean mkdirs = new File(csvFile.getParent()).mkdirs();
+        }
         BufferedWriter bufferedWriter = null;
         String strT="";
         try {
-            bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(csvFile),"utf-8"));
+            bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(csvFile), coding));
             BaseServiceImpl baseService = new BaseServiceImpl();
-            QueryRunner queryRunner = JDBCUtilHikariCP.getQueryRunner();
             //查询头数据
             String pageSql1 = baseService.getPageBeanSqlOracle(sql, 1, 1);
+//            logger.info("得到pageSql1="+pageSql1);
             List<Map<String, Object>> listMap1 = baseService.selectListMapBySql(queryRunner, pageSql1);
-            Map<String, Object> map = (Map)listMap1.get(0);
-            Set<Map.Entry<String, Object>> entrySet = map.entrySet();
-            StringBuffer sBuffer2 = new StringBuffer();
-            Iterator iterator = entrySet.iterator();
+//            List<Map<String, Object>> listMap1= (List<Map<String, Object>>) queryRunner.query(pageSql1, new MapListHandler());
+            if(listMap1!=null&&listMap1.size()!=0){
+                Map<String, Object> map = (Map<String, Object>)listMap1.get(0);
+                Set<Map.Entry<String, Object>> entrySet = map.entrySet();
+                StringBuffer sBuffer2 = new StringBuffer();
+                Iterator<Entry<String, Object>> iterator = entrySet.iterator();
 
-            while(iterator.hasNext()) {
-                Map.Entry<String, Object> entry = (Map.Entry)iterator.next();
-                sBuffer2.append((String)entry.getKey());
-                sBuffer2.append(separator);
-            }
-
-            strT = sBuffer2.toString();
-            strT = strT.substring(0, strT.length() - separator.length());
-            strT = strT.substring(0, strT.lastIndexOf(separator));	//得到头数据
-            if (head) {	//是否将头数据写入到文件
-                bufferedWriter.write(strT + System.getProperty("line.separator"));
-            }
-            int total = baseService.getTotlaBySql(queryRunner, sql).intValue();
-            for(int i=1;i<=total/batchSize+1;i++){
-                String pageSql2 = baseService.getPageBeanSqlOracle(sql, i, batchSize);
-                List<Object[]> list = baseService.selectListArrayBySql(queryRunner, pageSql2);
-                for (Object[] objects:list) {
-                    String strLin ="";
-                    for(int j=0;j<objects.length;j++){	//遍历一行数据
-                        String objStr=objects[j]+"";
-                        strLin+=objStr+separator;
-                    }
-                    if(strLin.contains("null")){
-//                    	logger.info("数据中包含有null,将会被替换成空字符串:"+strLin);
-                    }
-                    strLin=strLin.replace("null", "");
-                    strLin = strLin.substring(0, strLin.length() - 1);
-//                    strLin = strLin.replace(", ", separator);
-                    strLin=strLin.substring(0, strLin.lastIndexOf(separator));	//去掉最后的序列列
-                    bufferedWriter.write(strLin+System.getProperty("line.separator"));
+                while(iterator.hasNext()) {
+                    Map.Entry<String, Object> entry = (Map.Entry<String, Object>)iterator.next();
+                    sBuffer2.append((String)entry.getKey());
+                    sBuffer2.append(separator);
                 }
-                bufferedWriter.flush();
+
+                strT = sBuffer2.toString();
+                strT = strT.substring(0, strT.length() - separator.length());
+                strT = strT.substring(0, strT.lastIndexOf(separator));	//得到头数据
+                if (head) {	//是否将头数据写入到文件
+                    bufferedWriter.write(strT + System.getProperty("line.separator"));
+                }
+                int total = baseService.getTotlaBySql(queryRunner, sql).intValue();
+//                logger.info("共有"+total+"条数据");
+                if(total==0){
+                    return null;
+                }else{
+                    for(int i=1;i<=total/batchSize+1;i++){
+                        String pageSql2 = baseService.getPageBeanSqlOracle(sql, i, batchSize);
+                        List<Object[]> list = baseService.selectListArrayBySql(queryRunner, pageSql2);
+//                		List<Object[]> list = queryRunner.query(pageSql2, new ArrayListHandler());
+                        for (Object[] objects:list) {
+                            String strLin ="";
+                            for(int j=0;j<objects.length;j++){	//遍历一行数据
+                                String objStr=objects[j]+"";
+                                strLin+=objStr+separator;
+                            }
+                            if(strLin.contains("null")){
+//                        	logger.info("数据中包含有null,将会被替换成空字符串:"+strLin);
+                            }
+                            strLin=strLin.replace("null", "");
+                            strLin = strLin.substring(0, strLin.length() - 1);
+//                        	strLin = strLin.replace(", ", separator);
+                            strLin=strLin.substring(0, strLin.lastIndexOf(separator));	//去掉最后的序列列
+                            bufferedWriter.write(strLin+System.getProperty("line.separator"));
+                        }
+                        bufferedWriter.flush();
+                    }
+                    bufferedWriter.flush();
+                    return strT;
+                }
             }
-            bufferedWriter.flush();
-            return strT;
         } catch (Exception e) {
+//            logger.error("根据sql封装csv文件有误：",e);
             e.printStackTrace();
         } finally {
             try {
                 if (bufferedWriter != null) {
                     bufferedWriter.close();
                 }
-            } catch (IOException var23) {
-                var23.printStackTrace();
+            } catch (IOException e2) {
+                e2.printStackTrace();
+            } finally {
+                queryRunner=null;
             }
         }
-        return strT;
+        return null;
     }
 
     /**
