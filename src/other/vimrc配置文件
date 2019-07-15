@@ -3,13 +3,24 @@
 "set nocompatible	" Use Vim defaults instead of 100% vi compatibility
 "set backspace=2		" more powerful backspacing
 
-set number              "显示行号
-colorscheme molokai		"配色方案
-set cursorline          "突出显示当前行
+set filetype=python		"python自动缩进
+au BufNewFile,BufRead *.py,*.pyw setf python
+set autoindent 
+set smartindent
+set expandtab
 set tabstop=4           "tab建的宽度
+set shiftwidth=4
+set softtabstop=4
+set number              "显示行号
+colorscheme molokai     "配色方案
+set cursorline          "突出显示当前行
 set fdm=indent			"设置代码折叠"
 set clipboard=unnamed	"设置与系统共享粘贴版
 syntax on               "代码高亮
+" 显示换行符
+set listchars=eol:$,tab:>-,trail:~,extends:>,precedes:<
+set list
+
 "set showmatch
 
 " Don't write backup file if vim is being called by "crontab -e"
@@ -80,3 +91,5 @@ filetype plugin on    " required
 " h: vundle         - 获取帮助
 
 " vundle的配置到此结束，下面是你自己的配置
+
+
