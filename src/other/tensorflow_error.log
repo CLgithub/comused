@@ -1,0 +1,53 @@
+WARNING:tensorflow:From /usr/local/Cellar/python/3.7.0/lib/python3.7/site-packages/tensorflow/python/ops/nn_impl.py:180: add_dispatch_support.<locals>.wrapper (from tensorflow.python.ops.array_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use tf.where in 2.0, which has the same broadcast rule as np.where
+Found 2000 images belonging to 2 classes.
+Found 1000 images belonging to 2 classes.
+2019-11-15 09:43:54.060510: I tensorflow/core/platform/cpu_feature_guard.cc:142] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2 FMA
+2019-11-15 09:43:54.066553: I tensorflow/core/platform/profile_utils/cpu_utils.cc:94] CPU Frequency: 2194950000 Hz
+2019-11-15 09:43:54.066798: I tensorflow/compiler/xla/service/service.cc:168] XLA service 0x4aac9b0 executing computations on platform Host. Devices:
+2019-11-15 09:43:54.066829: I tensorflow/compiler/xla/service/service.cc:175]   StreamExecutor device (0): <undefined>, <undefined>
+2019-11-15 09:43:54.069415: I tensorflow/stream_executor/platform/default/dso_loader.cc:42] Successfully opened dynamic library libcuda.so.1
+2019-11-15 09:43:54.133787: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:1005] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2019-11-15 09:43:54.134772: I tensorflow/compiler/xla/service/service.cc:168] XLA service 0x4b7a190 executing computations on platform CUDA. Devices:
+2019-11-15 09:43:54.134809: I tensorflow/compiler/xla/service/service.cc:175]   StreamExecutor device (0): GeForce 840M, Compute Capability 5.0
+2019-11-15 09:43:54.134993: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:1005] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2019-11-15 09:43:54.135932: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1640] Found device 0 with properties:
+name: GeForce 840M major: 5 minor: 0 memoryClockRate(GHz): 1.124
+pciBusID: 0000:04:00.0
+2019-11-15 09:43:54.136184: I tensorflow/stream_executor/platform/default/dso_loader.cc:42] Successfully opened dynamic library libcudart.so.10.0
+2019-11-15 09:43:54.137886: I tensorflow/stream_executor/platform/default/dso_loader.cc:42] Successfully opened dynamic library libcublas.so.10.0
+2019-11-15 09:43:54.139236: I tensorflow/stream_executor/platform/default/dso_loader.cc:42] Successfully opened dynamic library libcufft.so.10.0
+2019-11-15 09:43:54.139611: I tensorflow/stream_executor/platform/default/dso_loader.cc:42] Successfully opened dynamic library libcurand.so.10.0
+2019-11-15 09:43:54.141371: I tensorflow/stream_executor/platform/default/dso_loader.cc:42] Successfully opened dynamic library libcusolver.so.10.0
+2019-11-15 09:43:54.142385: I tensorflow/stream_executor/platform/default/dso_loader.cc:42] Successfully opened dynamic library libcusparse.so.10.0
+2019-11-15 09:43:54.146233: I tensorflow/stream_executor/platform/default/dso_loader.cc:42] Successfully opened dynamic library libcudnn.so.7
+2019-11-15 09:43:54.146393: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:1005] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2019-11-15 09:43:54.147296: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:1005] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2019-11-15 09:43:54.148138: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1763] Adding visible gpu devices: 0
+2019-11-15 09:43:54.148216: I tensorflow/stream_executor/platform/default/dso_loader.cc:42] Successfully opened dynamic library libcudart.so.10.0
+2019-11-15 09:43:54.149478: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1181] Device interconnect StreamExecutor with strength 1 edge matrix:
+2019-11-15 09:43:54.149493: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1187]      0
+2019-11-15 09:43:54.149510: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1200] 0:   N
+2019-11-15 09:43:54.149665: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:1005] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2019-11-15 09:43:54.150603: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:1005] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2019-11-15 09:43:54.151524: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1326] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:0 with 1711 MB memory) -> physical GPU (device: 0, name: GeForce 840M, pci bus id: 0000:04:00.0, compute capability: 5.0)
+WARNING:tensorflow:From /usr/local/Cellar/python/3.7.0/lib/python3.7/site-packages/keras/backend/tensorflow_backend.py:422: The name tf.global_variables is deprecated. Please use tf.compat.v1.global_variables instead.
+
+Epoch 1/100
+2019-11-15 09:43:56.248442: I tensorflow/stream_executor/platform/default/dso_loader.cc:42] Successfully opened dynamic library libcublas.so.10.0
+2019-11-15 09:43:56.506490: I tensorflow/stream_executor/platform/default/dso_loader.cc:42] Successfully opened dynamic library libcudnn.so.7
+2019-11-15 09:43:57.408078: E tensorflow/stream_executor/cuda/cuda_dnn.cc:329] Could not create cudnn handle: CUDNN_STATUS_INTERNAL_ERROR
+2019-11-15 09:43:57.410767: E tensorflow/stream_executor/cuda/cuda_dnn.cc:329] Could not create cudnn handle: CUDNN_STATUS_INTERNAL_ERROR
+
+
+
+# 配置gpu训练时内存分配，应该单独学习gpu资源管理，合理分配gpu资源，才能更好的利用，tensorflow还没能在工具层处理这问题，所以才必须在代码
+中进行配置
+config = tf.ConfigProto(log_device_placement=False)    # 是否打印设备分配日志
+config.gpu_options.per_process_gpu_memory_fraction=0.7 # 设置每个gpu应该拿出多少容量给进程使用
+config.operation_timeout_in_ms=15000   # terminate on long hangs
+sess = tf.InteractiveSession("", config=config)
+
+
+I tensorflow/compiler/xla/service/platform_util.cc:194] StreamExecutor cuda device (0) is of insufficient compute capability: 3.5 required, device is 3.0
