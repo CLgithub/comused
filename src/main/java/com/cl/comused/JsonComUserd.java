@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 
+
 /**
  * 常用json---object转换
  * 尝试自己封装反射方法
@@ -22,8 +23,11 @@ public class JsonComUserd {
         objArr[1]=new TestA("a2", 2, "c2");
 
         JSONArray jsonArray = objArrToJsonArr(objArr);
+        System.out.println("jsonArray:"+jsonArray);
         JSONObject jsonObject = objToJson(new TestA("a", 1, "c"));
         System.out.println(jsonObject);
+
+
         TestA testA = jsonToObj(jsonObject, TestA.class);
 
         TestA[] testAS = jsonArrToObjArr(jsonArray, TestA.class);
